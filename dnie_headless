@@ -1,0 +1,31 @@
+#!/bin/bash
+
+SOURCE="$1"
+if [ -z "$SOURCE" ]; then
+    echo "usage: $0 libpkcs11-dnie_x.y.z_amd64.deb [tmpdir]"
+    exit 1
+fi
+
+DIR="$2"
+if [ -z "$DIR" ]; then
+    DIR=$(mktemp -d)
+    trap 'rm -rf ${DIR}' EXIT
+fi
+
+set -e
+
+dpkg-deb -R "$SOURCE" "$DIR"
+cat >"$DIR/DEBIAN/postinst" <<EOT
+#!/bin/sh
+if [ "\$1" = "configure" ]; then
+    ldconfig
+fi
+EOT
+
+sed -i -e 's/^Package: \(\S\+\)\s*$/Package: \1-headless/' "$DIR/DEBIAN/control"
+sed -i -e 's/^Version: \(\S\+\)\s*$/Version: \1+local1/' "$DIR/DEBIAN/control"
+if ! grep -q -e '^Depends:.*pinentry-gnome3' "$DIR/DEBIAN/control"; then
+    sed -i -e 's/^Depends:\(\.*\)\(\spinentry\)/Depends:\1 pinentry-gnome3 (>= 0.7.2-3) |\2/' "$DIR/DEBIAN/control"
+fi
+dpkg -b "$DIR" .
+

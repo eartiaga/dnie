@@ -1,0 +1,41 @@
+---
+version: "3"
+services:
+  dnie:
+    privileged: true
+    ipc: host
+    network_mode: bridge
+    restart: never
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Debian version
+        BASE_IMAGE_VERSION: "bookworm-slim"
+        # DNIE version
+        DNIE_VERSION: "1.6.8"
+        # Default browser and arguments to use
+        DEFAULT_BROWSER: "chromium"
+        # DEFAULT_BROWSER: "firefox --new-instance"
+        # Enable sudo for debugging purposes
+        DNIE_SUDO: "false"
+        # Container user definitions (probably you don't need to change them)
+        # DNIE_USER: "dnie"
+        # DNIE_GROUP: "dnie"
+        # DNIE_UID: "1001"
+        # DNIE_GID: "1001"
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /var/run/pcscd:/var/run/pcscd:rw
+      - ${HOME}:/home/dnie/Host:rw
+    devices:
+      - /dev/nvidia0
+      - /dev/nvidiactl
+      - /dev/nvidia-modeset
+      - /dev/dri
+      - /dev/snd
+    environment:
+      - DISPLAY=unix$DISPLAY
+      - BROWSER=chromium

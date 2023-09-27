@@ -1,0 +1,27 @@
+#!/bin/bash
+
+DRIVER="/usr/lib/libpkcs11-dnie.so"
+URL="/usr/share/libpkcs11-dnie/launch.html"
+CERT="/usr/share/libpkcs11-dnie/AC RAIZ DNIE 2.crt"
+
+if [ -z "$BROWSER" ]; then
+    if [ -n "$DEFAULT_BROWSER" ]; then
+        BROWSER="$DEFAULT_BROWSER"
+    else
+        BROWSER="chromium"
+    fi
+fi
+
+if [ -n "$1" ]; then
+    BROWSER="$1"
+fi
+
+if [ ! -e "$HOME/.pki/nssdb" ]; then
+    mkdir -p "$HOME/.pki/nssdb"
+    chmod 700 "$HOME/.pki/nssdb"
+    modutil -force -create -dbdir "$HOME/.pki/nssdb/"
+fi
+modutil -force -dbdir .pki/nssdb/ -add "DNIe" -libfile "$DRIVER"
+certutil -d "sql:$HOME/.pki/nssdb" -A -t "CT,C,C" -n "AC_RAIZ_DNIE_2" -i "$CERT"
+
+$BROWSER "$URL"

@@ -1,0 +1,20 @@
+{
+  "policies": {
+    "Certificates": {
+      "ImportEnterpriseRoots": true,
+      "Install": [
+        "/usr/local/share/ca-certificates/AC_RAIZ_DNIE_2.crt"
+      ]
+    },
+    "SecurityDevices": {
+      "Add": {
+        "DNIe PKCS#11 Module": "/usr/lib/libpkcs11-dnie.so"
+      }
+    },
+    "DisableFirefoxStudies": true,
+    "DisableTelemetry": true,
+    "DontCheckDefaultBrowser": true,
+    "NoDefaultBookmarks": true,
+    "OfferToSaveLogins": false
+  }
+}
