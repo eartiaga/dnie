@@ -29,7 +29,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/machine-id:/etc/machine-id:ro
       - /var/run/pcscd:/var/run/pcscd:rw
-      - ${HOME}:/home/dnie/Host:rw
+      - ${HOME}:/Host:rw
     devices:
       - /dev/nvidia0
       - /dev/nvidiactl
